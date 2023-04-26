@@ -1,0 +1,181 @@
+openapi: 3.0.3
+
+info:
+  title: Alps Drive API
+  version: '0.1'
+
+servers:
+  - url: http://localhost:3000
+    description: Localhost port 3000
+  - url: http://localhost:8080
+    description: Localhost port 8080
+
+paths:
+  /api/drive/:
+    get:
+      tags:
+        - Drive
+      description: Retourne une liste contenant les dossiers et fichiers à la racine du “drive”
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriveItem'
+        '400':
+          description: bad request
+
+    post:
+      tags:
+        - Drive
+      description: Créer un dossier avec le nom {name}
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+        '400':
+          description: Si {folder} contient des caractères non-alphanumérique
+
+    put:
+      tags:
+        - Drive
+      description: Charge un fichier à la racine du “drive”
+      requestBody:
+        description: "Upload any file"
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Fichier enregistré
+        '400':
+          description: Si aucun fichier n’est présent dans la requête
+
+    delete:
+      tags:
+        - Drive
+      description: Suppression d’un dossier ou d’un fichier avec le nom {name}
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier ou dossier supprimé
+        '400':
+          description: Si {name} contient des caractères non-alphanumérique
+
+  /api/drive/{folder}:
+    get:
+      tags:
+        - Drive
+      description: Retourne le contenu de {folder}
+      parameters:
+        - name: folder
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriveItem'
+        '400':
+          description: bad request
+
+    post:
+      tags:
+        - Drive
+      description: Créer un dossier avec le nom {name} dans le dossier {folder}
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: folder
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+        '400':
+          description: Si {folder} contient des caractères non-alphanumérique
+
+    put:
+      tags:
+        - Drive
+      description: Charge un fichier dans le dossier {folder} du “drive”
+      parameters:
+        - name: folder
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: "Upload any file"
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Fichier enregistré
+        '400':
+          description: Si aucun fichier n’est présent dans la requête
+
+    delete:
+      tags:
+        - Drive
+      description: Suppression d’un dossier ou d’un fichier avec le nom {name} dans le dossier {folder}
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: folder
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier ou dossier supprimé
+        '400':
+          description: Si {name} contient des caractères non-alphanumérique
+
+components:
+  schemas:
+    DriveItem:
+      required:
+        - name
+        - isFolder
+      type: object
+      properties:
+        isFolder:
+          type: boolean
+        name:
+          type: string
+        size:
+          type: number

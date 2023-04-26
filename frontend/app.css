@@ -1,0 +1,85 @@
+body {
+    font-family: 'Roboto', monospace;
+    margin: 0;
+}
+ul {
+    list-style-type: none;
+}
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+input[type="file"]{
+    position: absolute;
+    top: -500px;
+}
+
+.header {
+    background-color: aquamarine;
+    box-shadow: 0px 5px 5px black;
+    height: 80px;
+    font-size: 2rem;
+    padding: 30px 0 0 30px;
+}
+.app {
+    font-size: 1.2rem;
+    padding: 20px;
+}
+.drive-item svg {
+    margin-right: 10px;
+}
+.drive-item span {
+    font-size: 0.8rem;
+}
+.drive-item div {
+    display: inline;
+}
+.drive-breadcrumb {
+    margin-bottom: 10px;
+}
+.drive-breadcrumb-text {
+    margin-left: 10px;
+    cursor: default;
+}
+.drive-item-folder {
+    cursor: pointer;
+}
+.drive-item-action {
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0.2;
+}
+.drive-item-action:hover {
+    opacity: 1;
+}
+
+.drive-add-file {
+    margin-right: 30px;
+}
+.drive-add-file label {
+    text-decoration-line: underline;
+    cursor: cell;
+}
+
+.drive-add-folder {
+    margin-bottom: 10px;
+}
+.drive-add-folder span {
+    font-size: 1.8rem;
+    margin-left: 5px;
+    vertical-align: bottom;
+}
+
+.alert {
+    color: darkred;
+}
+.msg-error {
+    display: block;
+    color: darkred;
+    font-size: 0.9rem;
+}
+.flex-horizontal {
+    display: flex;
+    align-items: center;
+}
+
