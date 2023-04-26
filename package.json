@@ -1,0 +1,17 @@
+{
+  "name": "alps-drive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-busboy": "^9.0.0",
+    "nodemon": "^2.0.22"
+  }
+}
