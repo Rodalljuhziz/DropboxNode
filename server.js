@@ -9,7 +9,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 const path = require('node:path');
 const regex = /[^A-Za-z0-9]/g;
-const { mkdir } = require('fs/promises');
 const Busboy = require('express-busboy');
 Busboy.extend(app);
 
