@@ -10,7 +10,6 @@ app.use(express.urlencoded({extended : true}));
 const path = require('node:path');
 const regex = /[^A-Za-z0-9]/g;
 const Busboy = require('express-busboy');
-Busboy.extend(app);
 
 Busboy.extend(app, {
     upload:true,
@@ -98,7 +97,7 @@ app.post('/api/drive/*', async (req, res)=>{
         {
             if(error){
             res.send("Directory not created, error");
-        }else{
+        } else{
             res.status(201).send('<h1>Directory successfully created</h1>');
         }
         });
@@ -116,49 +115,34 @@ app.delete('/api/drive/*', async(req, res) =>{
     }
 });
 
-app.put('/api/drive/:folder', async (req, res) =>{
+app.put('/api/drive', async (req, res) =>{
     res.setHeader('Content-Type', 'multipart/form-data');
 
-    const test = req.files.file.filename;
-    if(test){
-        fs.copyFileSync(req.files.file.file, temp + test);
-        res.status(201).send('<h1>the file is successfully uploaded</h1>');
-    } else{
+    const nameFile = req.files.file.filename;
+    console.log(path.join(temp, nameFile));
+    if(!fs.existsSync(path.join(temp, nameFile))) {
+        if (nameFile) {
+            fs.copyFileSync(req.files.file.file, temp + "/" + nameFile);
+            res.status(201).send(nameFile);
+        } else {
+            res.status(400).send('<h1>the upload failed</h1>');
+        }
+    } else {
+        res.status(400).send("file already exist!");
+    }
+});
+
+app.put('/api/drive/*', async(req, res) =>{
+    res.setHeader('Content-Type', 'multipart/form-data');
+    const currentDirectory = req.params[0];
+    const nameFilesRecursif = req.files.file.filename;
+    if(nameFilesRecursif){
+        fs.copyFileSync(req.files.file.file, temp + "/" + currentDirectory + "/" + nameFilesRecursif);
+        res.status(201).send('<h1>the file is successfully created</h1>');
+    } else {
         res.status(400).send('<h1>the upload failed</h1>');
     }
-   // const fileName = req.files.file.filename;
-    //console.log(fileName);
 
-    /*if (!regex.test(fileName)) {
-        res.status(400).send('Le nom de fichier doit être alphanumérique');
-        return;
-    }
-
-    // Vérifie que le fichier a bien été uploadé
-    if (!req.files || !req.files.file) {
-        res.status(400).send('Aucun fichier n\'a été uploadé');
-        return;
-    }
-
-    const file = req.files.file;
-
-    // Vérifie que la taille du fichier est inférieure à 10 Mo
-    if (file.size > 10 * 1024 * 1024) {
-        res.status(400).send('Le fichier est trop volumineux (maximum 10 Mo)');
-        return;
-    }
-
-    const filePath = path.join(temp, fileName);
-
-    // Écrit le contenu du fichier dans le chemin spécifié
-    file.mv(filePath, (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Erreur lors de l\'écriture du fichier');
-        } else {
-            res.status(201).send('Fichier uploadé avec succès');
-        }
-    });*/
 });
 
 app.all('*', (req, res) => {
