@@ -161,6 +161,6 @@ app.put('/api/drive/:folder', async (req, res) =>{
     });*/
 });
 
-/*app.all('*', (req, res) => {
+app.all('*', (req, res) => {
     res.status(404).send('<h1>404! Page not found</h1>');
-});*/
+});
