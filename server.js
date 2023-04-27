@@ -15,8 +15,7 @@ Busboy.extend(app);
 
 Busboy.extend(app, {
     upload:true,
-    path: '/path/to/save/files',
-    allowedPath: /./
+    path: temp,
 })
 
 app.listen(port, () => {
@@ -45,23 +44,27 @@ app.get('/api/drive', async (req, res) => {
 
 app.get('/api/drive/*',async (req, res) => {
     const paramRequest = req.params[0];
-    const newPath = await fs.promises.readdir(path.join(temp, paramRequest), {withFileTypes: true});
-    const test = newPath.map(array => {
-        if (array.isDirectory()) { //grace a readdir je peut appeler les methodes isdirectory et .size
-            return {
-                name: array.name,
-                isFolder: array.isDirectory()
+    if(fs.lstatSync(path.join(temp,paramRequest)).isDirectory()){
+        const newPath = await fs.promises.readdir(path.join(temp, paramRequest), {withFileTypes: true});
+        const test = newPath.map(array => {
+            if (array.isDirectory()) { //grace a readdir je peut appeler les methodes isdirectory et .size
+                return {
+                    name: array.name,
+                    isFolder: array.isDirectory()
+                }
+            } else {
+                return {
+                    name: array.name
+                    , size: fs.statSync(path.join(temp, paramRequest, array.name)).size,
+                    isFolder: array.isDirectory()
+                }
             }
-        } else {
-            return {
-                name: array.name
-                , size: fs.statSync(path.join(temp, paramRequest, array.name)).size,
-                isFolder: array.isDirectory()
-            }
-        }
 
-    });
-    res.send(test);
+        });
+        res.status(200).send(test);
+    } else{
+        res.send(fs.readFileSync(path.join(temp, paramRequest)));
+    }
 });
 
 app.post('/api/drive', async (req, res)=>{
@@ -114,9 +117,19 @@ app.delete('/api/drive/*', async(req, res) =>{
     }
 });
 
-app.put('/api/drive/:name', async (req, res) =>{
-    const fileName = req.files.name;
-    console.log(fileName);
+app.put('/api/drive/:folder', async (req, res) =>{
+    res.setHeader('Content-Type', 'multipart/form-data');
+
+    const test = req.files.file.filename;
+    if(test){
+        fs.copyFileSync(req.files.file.file, temp + test);
+        res.status(201).send('<h1>the file is successfully uploaded</h1>');
+    } else{
+        res.status(400).send('<h1>the upload failed</h1>');
+    }
+   // const fileName = req.files.file.filename;
+    //console.log(fileName);
+
     /*if (!regex.test(fileName)) {
         res.status(400).send('Le nom de fichier doit être alphanumérique');
         return;
@@ -149,6 +162,6 @@ app.put('/api/drive/:name', async (req, res) =>{
     });*/
 });
 
-app.all('*', (req, res) => {
+/*app.all('*', (req, res) => {
     res.status(404).send('<h1>404! Page not found</h1>');
-});
+});*/
